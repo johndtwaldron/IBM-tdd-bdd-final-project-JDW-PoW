@@ -23,12 +23,12 @@ lint: ## Run the linter
 	$(info Running linting...)
 	flake8 service tests --count --select=E9,F63,F7,F82 --show-source --statistics
 	flake8 service tests --count --max-complexity=10 --max-line-length=127 --statistics
-	pylint service tests --max-line-length=127
+	pylint service --max-line-length=127
 
 .PHONY: tests
-tests: ## Run the unit tests
+tests: ## Run the unit tests ( 	#nosetests -vv --with-spec --spec-color --with-coverage --cover-package=service)
 	$(info Running tests...)
-	nosetests -vv --with-spec --spec-color --with-coverage --cover-package=service
+	PYTHONPATH=. nosetests -v tests/test_*.py --with-coverage --cover-erase --cover-package=service
 
 run: ## Run the service
 	$(info Starting service...)

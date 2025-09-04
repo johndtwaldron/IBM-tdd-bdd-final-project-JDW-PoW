@@ -51,6 +51,7 @@ def step_impl(context, text_string):
     assert(text_string not in element.text)
 
 @when('I set the "{element_name}" to "{text_string}"')
+@then('I set the "{element_name}" to "{text_string}"')
 def step_impl(context, element_name, text_string):
     element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = context.driver.find_element(By.ID, element_id)
@@ -58,6 +59,7 @@ def step_impl(context, element_name, text_string):
     element.send_keys(text_string)
 
 @when('I select "{text}" in the "{element_name}" dropdown')
+@then('I select "{text}" in the "{element_name}" dropdown')
 def step_impl(context, text, element_name):
     element_id = ID_PREFIX + element_name.lower().replace(' ', '_')
     element = Select(context.driver.find_element(By.ID, element_id))
@@ -104,7 +106,8 @@ def step_impl(context, element_name):
 # to get the element id of any button
 ##################################################################
 
-## UPDATE CODE HERE ##
+# --- Field empty check ---
+
 
 ##################################################################
 # This code works because of the following naming convention:
@@ -132,3 +135,54 @@ def step_impl(context, element_name, text_string):
     )
     element.clear()
     element.send_keys(text_string)
+
+from behave import when, then
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions
+
+# Click any UI button by its id pattern: "<lowercase label>-btn"
+@when('I press the "{button}" button')
+@then('I press the "{button}" button')  # allow And/Then inheritance
+def step_press_button(context, button):
+    btn_id = f"{button.lower()}-btn"
+    el = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.element_to_be_clickable((By.ID, btn_id))
+    )
+    el.click()
+
+# Flash message assertion
+# features/steps/web_steps.py
+
+@then('I should see the message "{message}"')
+def step_see_flash_message(context, message):
+    flash = WebDriverWait(context.driver, context.wait_seconds).until(
+        expected_conditions.visibility_of_element_located((By.ID, "flash_message"))
+    )
+    text = flash.text.lower()
+
+    # Treat "Success" as any successful action message
+    if message.lower() == "success":
+        ok_tokens = ["success", "created", "updated", "deleted"]
+        assert any(t in text for t in ok_tokens), f'Expected a success message, got: {flash.text!r}'
+    else:
+        assert message.lower() in text, f'Expected "{message}" in flash, got: {flash.text!r}'
+
+# Helpers to find results container (UI may use "search_results" or "results")
+def _results_container(context):
+    for rid in ("search_results", "results"):
+        try:
+            return context.driver.find_element(By.ID, rid)
+        except Exception:
+            pass
+    raise AssertionError('Results container not found (tried "search_results" and "results")')
+
+@then('I should see "{text}" in the results')
+def step_see_in_results(context, text):
+    results = _results_container(context)
+    assert text in results.text, f'Expected to see "{text}" in results, got: {results.text!r}'
+
+@then('I should not see "{text}" in the results')
+def step_not_see_in_results(context, text):
+    results = _results_container(context)
+    assert text not in results.text, f'Expected NOT to see "{text}" in results'

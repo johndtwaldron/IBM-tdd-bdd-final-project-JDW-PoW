@@ -135,14 +135,14 @@ class TestProductRoutes(TestCase):
         #
 
         # # Check that the location header was correct
-        # response = self.client.get(location)
-        # self.assertEqual(response.status_code, status.HTTP_200_OK)
-        # new_product = response.get_json()
-        # self.assertEqual(new_product["name"], test_product.name)
-        # self.assertEqual(new_product["description"], test_product.description)
-        # self.assertEqual(Decimal(new_product["price"]), test_product.price)
-        # self.assertEqual(new_product["available"], test_product.available)
-        # self.assertEqual(new_product["category"], test_product.category.name)
+        response = self.client.get(location)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        new_product = response.get_json()
+        self.assertEqual(new_product["name"], test_product.name)
+        self.assertEqual(new_product["description"], test_product.description)
+        self.assertEqual(Decimal(new_product["price"]), test_product.price)
+        self.assertEqual(new_product["available"], test_product.available)
+        self.assertEqual(new_product["category"], test_product.category.name)
 
     def test_create_product_with_no_name(self):
         """It should not Create a Product without a name"""
@@ -178,3 +178,113 @@ class TestProductRoutes(TestCase):
         data = response.get_json()
         # logging.debug("data = %s", data)
         return len(data)
+
+    # EX 3 JDW
+
+    # --- READ ---
+    def test_get_product(self):
+        """It should Get a single Product"""
+        test_product = self._create_products(1)[0]
+        resp = self.client.get(f"{BASE_URL}/{test_product.id}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["name"], test_product.name)
+
+    def test_get_product_not_found(self):
+        """It should not Get a Product thats not found"""
+        resp = self.client.get(f"{BASE_URL}/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        self.assertIn("was not found", data["message"])
+
+    # --- UPDATE ---
+    def test_update_product(self):
+        """It should Update a Product"""
+        product = self._create_products(1)[0]
+        # prepare a full body like the create route expects
+        body = {
+            "name": product.name,
+            "description": "Updated Description",
+            "price": str(product.price),
+            "available": product.available,
+            "category": product.category.name,
+        }
+        resp = self.client.put(f"{BASE_URL}/{product.id}", json=body, content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["id"], product.id)
+        self.assertEqual(data["description"], "Updated Description")
+
+    def test_update_product_not_found(self):
+        """It should return 404 on Update for missing Product"""
+        # valid body, but ID doesn't exist
+        body = {
+            "name": "X",
+            "description": "Y",
+            "price": "9.99",
+            "available": True,
+            "category": "FOOD",
+        }
+        resp = self.client.put(f"{BASE_URL}/0", json=body, content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    # --- DELETE ---
+    def test_delete_product(self):
+        """It should Delete a Product"""
+        product = self._create_products(1)[0]
+        resp = self.client.delete(f"{BASE_URL}/{product.id}")
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        # ensure it's gone
+        resp = self.client.get(f"{BASE_URL}/{product.id}")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_delete_product_not_found(self):
+        """It should return 404 when deleting a missing Product"""
+        resp = self.client.delete(f"{BASE_URL}/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+    # --- LIST ALL + FILTERS ---
+    def test_list_all_products(self):
+        """It should List all Products"""
+        _ = self._create_products(5)
+        resp = self.client.get(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 5)
+
+    def test_query_products_by_name(self):
+        """It should Query Products by name"""
+        products = self._create_products(10)
+        name = products[0].name
+        expected = len([p for p in products if p.name == name])
+        resp = self.client.get(f"{BASE_URL}?name={name}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), expected)
+        for item in data:
+            self.assertEqual(item["name"], name)
+
+    def test_query_products_by_category(self):
+        """It should Query Products by category"""
+        products = self._create_products(10)
+        category = products[0].category.name  # send enum name
+        expected = len([p for p in products if p.category.name == category])
+        resp = self.client.get(f"{BASE_URL}?category={category}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), expected)
+        for item in data:
+            self.assertEqual(item["category"], category)
+
+    def test_query_products_by_availability(self):
+        """It should Query Products by availability"""
+        products = self._create_products(10)
+        available = products[0].available
+        expected = len([p for p in products if p.available == available])
+        query = "true" if available else "false"
+        resp = self.client.get(f"{BASE_URL}?available={query}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), expected)
+        for item in data:
+            self.assertEqual(item["available"], available)

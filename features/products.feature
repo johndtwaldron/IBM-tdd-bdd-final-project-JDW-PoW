@@ -38,3 +38,111 @@ Scenario: Create a Product
     And I should see "True" in the "Available" dropdown
     And I should see "Tools" in the "Category" dropdown
     And I should see "34.95" in the "Price" field
+
+######################################################################
+# Read a Product
+######################################################################
+Scenario: Read a Product
+    When I visit the "Home Page"
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the "Name" field
+    And I should see "A red fedora" in the "Description" field
+    And I should see "True" in the "Available" dropdown
+    And I should see "Cloths" in the "Category" dropdown
+    And I should see "59.95" in the "Price" field
+
+######################################################################
+# Update a Product
+######################################################################
+Scenario: Update a Product
+    When I visit the "Home Page"
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I set the "Description" to "Updated description"
+    And I set the "Price" to "89.99"
+    And I select "False" in the "Available" dropdown
+    And I press the "Update" button
+    Then I should see the message "Success"
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "Updated description" in the "Description" field
+    And I should see "89.99" in the "Price" field
+    And I should see "False" in the "Available" dropdown
+######################################################################
+# Delete a Product
+######################################################################
+Scenario: Delete a Product
+    When I visit the "Home Page"
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I press the "Delete" button
+    Then I should see the message "Success"
+    And I press the "Retrieve" button
+    Then I should see the message "Not Found"
+
+######################################################################
+# List all Products
+######################################################################
+Scenario: List all Products
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+    And I should see "Shoes" in the results
+    And I should see "Big Mac" in the results
+    And I should see "Sheets" in the results
+
+######################################################################
+# Search by Category
+######################################################################
+Scenario: Search for Products by Category
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select "Cloths" in the "Category" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+    And I should not see "Apple" in the results
+
+######################################################################
+# Search by Availability
+######################################################################
+Scenario: Search for Products by Availability
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I select "True" in the "Available" dropdown
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+
+######################################################################
+# Search by Name
+######################################################################
+Scenario: Search for Products by Name
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I set the "Name" to "Hat"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "Hat" in the results
+    And I should not see "Apple" in the results
