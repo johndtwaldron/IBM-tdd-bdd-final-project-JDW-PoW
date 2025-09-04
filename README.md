@@ -7,9 +7,18 @@ Includes unit/integration tests, linting, and end-to-end BDD scenarios that driv
 
 > **Repo:** `johndtwaldron/IBM-tdd-bdd-final-project-JDW-PoW`
 
+# 🎓 Certification
+
+Cert URL PDF copy of my issued certificate: : Containers&K8s.JDW.cert.IBMDesign20250903-30-49pn3i.pdf
+
+![Credly Badge: TBD: ](introduction-to-test-driven-development.1.png)
+
+[Cert URL](https://www.coursera.org/account/accomplishments/verify/937KSG8P7VTI")
+PDF copy of my issued certificate: : [Containers&K8s.JDW.cert.IBMDesign20250903-30-49pn3i.pdf](IBMDesign20250904-31-ta0hf0.pdf)
+
 ---
 
-## ✨ Highlights
+## ✨ Project Highlights
 
 - **Test-first**: Red → Green → Refactor for models & routes.
 - **BDD UI coverage**: `behave` + Selenium scenarios for Create/Read/Update/Delete and filtered search.
