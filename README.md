@@ -40,9 +40,6 @@ Procfile # Honcho (Procfile-based) process manager
 Makefile # Dev shortcuts: lint, tests, run, db
 requirements.txt
 
-yaml
-Copy code
-
 ---
 
 ## 🚀 Getting Started
