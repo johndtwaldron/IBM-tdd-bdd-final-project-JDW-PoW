@@ -14,7 +14,7 @@ Cert URL PDF copy of my issued certificate: : Containers&K8s.JDW.cert.IBMDesign2
 ![Credly Badge: ](introduction-to-test-driven-development.1.png)
 
 [Cert URL](https://coursera.org/share/7258463a96a56c631fe34ded9022c919)
-PDF copy of my issued certificate: : [Containers&K8s.JDW.cert.IBMDesign20250903-30-49pn3i.pdf](IBMDesign20250904-31-ta0hf0.pdf)
+PDF copy of my issued certificate: [Containers&K8s.JDW.cert.IBMDesign20250903-30-49pn3i.pdf](IBMDesign20250904-31-ta0hf0.pdf)
 
 ---
 
