@@ -223,7 +223,6 @@ https://github.com/johndtwaldron/IBM-tdd-bdd-final-project-JDW-PoW/blob/main/fea
 
 🛠 Makefile Cheatsheet
 ```bash
-Copy code
 make help     # list targets
 make install  # pip install -r requirements.txt
 make lint     # flake8 + pylint
